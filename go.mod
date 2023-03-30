@@ -11,6 +11,12 @@ require (
 )
 
 require (
+	// validator接口里会使用到表单验证
+	github.com/astaxie/beego v1.12.3 // indirect
+	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
+)
+
+require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -47,4 +53,5 @@ replace (
 	github.com/ASOLMN/go-gin-example/routers => ./routers
 	github.com/Asolmn/go-gin-example/pkg/e => ./pkg/e
 	github.com/Asolmn/go-gin-example/pkg/util => ./pkg/util
+	github.com/Asolmn/go-gin-example/routers/api => ./routers/api
 )

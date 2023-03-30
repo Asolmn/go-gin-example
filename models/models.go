@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"gorm.io/driver/mysql"
@@ -41,8 +42,7 @@ func init() {
 	host = sec.Key("HOST").String()
 	tablePrefix = sec.Key("TABLE_PREFIX").String()
 
-	var s string
-	dsn := fmt.Sprintf(s, "%v:%v@tcp(%v:3306)/%v?charset=utf8mb4&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf("%v:%v@tcp(%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
 		user, password, host, dbName)
 
 	newLogger := logger.New(
@@ -55,8 +55,6 @@ func init() {
 		},
 	)
 
-	// 直接使用db.DB()方法获取*sql.DB对象
-
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   tablePrefix, // 前缀设定
@@ -68,11 +66,11 @@ func init() {
 	if err != nil {
 		log.Println(err)
 	}
+	// 直接使用db.DB()方法获取*sql.DB对象
+	sqlDB, err1 := db.DB()
 
-	sqlDB, err := db.DB()
-
-	if err != nil {
-		log.Println(err)
+	if err1 != nil {
+		log.Println(err1)
 	}
 	sqlDB.SetMaxIdleConns(10)  // 用于设置连接池中空闲连接的最大数量
 	sqlDB.SetMaxOpenConns(100) // 设置打开数据库连接的最大数量
@@ -81,8 +79,10 @@ func init() {
 
 func CloseDB() {
 	sqlDB, _ := db.DB()
-	err := sqlDB.Close()
-	if err != nil {
-		return
-	}
+	defer func(sqlDB *sql.DB) {
+		err := sqlDB.Close()
+		if err != nil {
+
+		}
+	}(sqlDB)
 }
