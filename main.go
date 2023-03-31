@@ -20,7 +20,6 @@ func main() {
 		WriteTimeout:   setting.WriteTimeout,                 // 允许写入的最大时间
 		MaxHeaderBytes: 1 << 20,                              // 请求头的最大字节数
 	}
-
 	// 与router.Run()方式本质上没有区别
 	err := s.ListenAndServe()
 	if err != nil {

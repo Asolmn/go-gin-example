@@ -90,15 +90,11 @@ func EditTag(id int, data interface{}) bool {
 
 func (tag *Tag) BeforeCreate(tx *gorm.DB) (err error) {
 
-	if tx.Statement.Changed() {
-		tx.Statement.SetColumn("CreatedOn", time.Now().Unix())
-	}
+	tx.Statement.SetColumn("CreatedOn", time.Now().Unix())
 	return
 }
 
 func (tag *Tag) BeforeUpdate(tx *gorm.DB) (err error) {
-	if tx.Statement.Changed() {
-		tx.Statement.SetColumn("ModifiedOn", time.Now().Unix())
-	}
+	tx.Statement.SetColumn("ModifiedOn", time.Now().Unix())
 	return
 }
