@@ -17,6 +17,7 @@ require (
 )
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -45,6 +46,7 @@ replace (
 	github.com/ASOLMN/go-gin-example/conf => ./conf
 
 	github.com/ASOLMN/go-gin-example/middleware => ./middleware
+	github.com/Asolmn/go-gin-example/middleware/jwt => ./middleware/jwt
 
 	github.com/ASOLMN/go-gin-example/models => ./models
 

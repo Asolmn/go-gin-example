@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	// 返回type Engine struct类型，包含RouterGroup
 	// 相当于创建一个路由Handlers，后期可以绑定各类的路由规则和函数、中间件
 	router := routers.InitRouter()
@@ -25,4 +24,5 @@ func main() {
 	if err != nil {
 		return
 	}
+
 }

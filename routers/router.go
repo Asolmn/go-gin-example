@@ -1,7 +1,9 @@
 package routers
 
 import (
+	"github.com/Asolmn/go-gin-example/middleware/jwt"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
+	"github.com/Asolmn/go-gin-example/routers/api"
 	v1 "github.com/Asolmn/go-gin-example/routers/api/v1"
 	"github.com/gin-gonic/gin"
 )
@@ -22,8 +24,10 @@ func InitRouter() *gin.Engine {
 	//		"message": "test",
 	//	})
 	//})
+	r.GET("/auth", api.GetAuth)
 
 	apiv1 := r.Group("/api/v1")
+	apiv1.Use(jwt.JWT()) // 将中间件接入Gin
 
 	{
 		// 获取标签列表
