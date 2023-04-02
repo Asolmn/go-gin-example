@@ -3,10 +3,10 @@ package api
 import (
 	"github.com/Asolmn/go-gin-example/models"
 	"github.com/Asolmn/go-gin-example/pkg/e"
+	"github.com/Asolmn/go-gin-example/pkg/logging"
 	"github.com/Asolmn/go-gin-example/pkg/util"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -42,7 +42,8 @@ func GetAuth(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
+			//log.Println(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{

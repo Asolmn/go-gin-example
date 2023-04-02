@@ -1,9 +1,9 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/Asolmn/go-gin-example/models"
 	"github.com/Asolmn/go-gin-example/pkg/e"
+	"github.com/Asolmn/go-gin-example/pkg/logging"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"github.com/Asolmn/go-gin-example/pkg/util"
 	"github.com/astaxie/beego/validation"
@@ -59,9 +59,12 @@ func AddTag(c *gin.Context) {
 		if !models.ExistTagByName(name) { // tag不存在，则添加tag
 			code = e.SUCCESS
 			models.AddTag(name, state, createdBy)
-			fmt.Println("success")
 		} else {
 			code = e.ERROR_EXIST_TAG
+		}
+	} else {
+		for _, err := range valid.Errors {
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
@@ -112,6 +115,10 @@ func EditTag(c *gin.Context) {
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
 		}
+	} else {
+		for _, err := range valid.Errors {
+			logging.Info(err.Key, err.Message)
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -136,6 +143,10 @@ func DeleteTag(c *gin.Context) {
 			models.DeleteTag(id)
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
+		}
+	} else {
+		for _, err := range valid.Errors {
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
