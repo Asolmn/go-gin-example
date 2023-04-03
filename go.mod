@@ -18,6 +18,7 @@ require (
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -46,13 +47,13 @@ replace (
 	github.com/ASOLMN/go-gin-example/conf => ./conf
 
 	github.com/ASOLMN/go-gin-example/middleware => ./middleware
-	github.com/Asolmn/go-gin-example/middleware/jwt => ./middleware/jwt
 
 	github.com/ASOLMN/go-gin-example/models => ./models
 
 	github.com/ASOLMN/go-gin-example/pkg/setting => ./pkg/setting
 
 	github.com/ASOLMN/go-gin-example/routers => ./routers
+	github.com/Asolmn/go-gin-example/middleware/jwt => ./middleware/jwt
 	github.com/Asolmn/go-gin-example/pkg/e => ./pkg/e
 	github.com/Asolmn/go-gin-example/pkg/util => ./pkg/util
 	github.com/Asolmn/go-gin-example/routers/api => ./routers/api
