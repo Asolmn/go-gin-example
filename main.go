@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-
+	// 通过endless实现服务重启的零停机
 	endless.DefaultReadTimeOut = setting.ReadTimeout
 	endless.DefaultWriteTimeOut = setting.WriteTimeout
 	endless.DefaultMaxHeaderBytes = 1 << 20
@@ -22,7 +22,7 @@ func main() {
 
 	server := endless.NewServer(endPoint, routers.InitRouter())
 	server.BeforeBegin = func(add string) {
-		log.Printf("Actual pid is %d", syscall.Getpid())
+		log.Printf("Actual pid is %d", syscall.Getpid()) // 输出进程的pid
 	}
 	//s := &http.Server{
 	//	Addr:           fmt.Sprintf(":%d", setting.HTTPPort), // 监听的tcp地址，格式为:8000
