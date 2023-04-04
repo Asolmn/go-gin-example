@@ -26,7 +26,7 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: Get multiple articles
+      summary: 获取多个文章
     post:
       parameters:
       - description: TagID
@@ -72,7 +72,7 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: Add article
+      summary: 新增文章
   /api/v1/articles/{id}:
     get:
       parameters:
@@ -88,7 +88,7 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: Get a single article
+      summary: 获取单个文章
   /api/v1/tags:
     get:
       parameters:
@@ -107,7 +107,7 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: Get multiple article tags
+      summary: 获取多个文章标签
     post:
       parameters:
       - description: Name
@@ -133,7 +133,7 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: Add article tag
+      summary: 新增文章标签
   /api/v1/tags/{id}:
     delete:
       parameters:
@@ -149,7 +149,7 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: Delete article tag
+      summary: 删除文章标签
     put:
       parameters:
       - description: ID
@@ -181,7 +181,7 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: Update article tag
+      summary: 修改文章标签
   /auth:
     get:
       parameters:
@@ -202,5 +202,5 @@ paths:
           description: '{"code":200,"data":{},"msg":"ok"}'
           schema:
             type: string
-      summary: Get Auth
+      summary: 获取验证
 swagger: "2.0"

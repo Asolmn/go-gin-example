@@ -6,6 +6,7 @@ import (
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"log"
@@ -19,6 +20,7 @@ type Model struct {
 	ID         int `gorm:"primary_key" json:"id"`
 	CreatedOn  int `json:"created_on"`
 	ModifiedOn int `json:"modified_on"`
+	DeletedOn  int `json:"deleted_on"`
 }
 
 func init() {
@@ -75,6 +77,83 @@ func init() {
 	sqlDB.SetMaxIdleConns(10)  // 用于设置连接池中空闲连接的最大数量
 	sqlDB.SetMaxOpenConns(100) // 设置打开数据库连接的最大数量
 
+	// 执行回调函数
+	err2 := db.Callback().Create().Replace("gorm:before_create", updateTimeStampForBeforeCreateCallback)
+	if err2 != nil {
+		return
+	}
+	err3 := db.Callback().Update().Replace("gorm:before_update", updateTimeStampForBeforeUpdateCallback)
+	if err3 != nil {
+		return
+	}
+	err4 := db.Callback().Delete().Replace("gorm:delete", deleteCallback)
+	if err4 != nil {
+		return
+	}
+
+}
+
+func updateTimeStampForBeforeCreateCallback(db *gorm.DB) {
+	db.Statement.SetColumn("CreatedOn", time.Now().Unix())
+}
+
+func updateTimeStampForBeforeUpdateCallback(db *gorm.DB) {
+	db.Statement.SetColumn("ModifiedOn", time.Now().Unix())
+}
+
+func deleteCallback(db *gorm.DB) {
+	if db.Error != nil {
+		return
+	}
+	if db.Statement.Schema != nil {
+
+		db.Statement.SQL.Grow(100) // 设置sql语句缓冲区大小
+
+		deletedOnField := db.Statement.Schema.LookUpField("DeletedOn") // 获取DeletedOn字段
+		if !db.Statement.Unscoped && deletedOnField != nil {           // 如果字段不为空且软删除为false
+			if db.Statement.SQL.String() == "" {
+				nowTime := time.Now().Unix()
+				db.Statement.AddClause(
+					clause.Set{
+						{
+							Column: clause.Column{Name: deletedOnField.DBName},
+							Value:  nowTime,
+						}, // 设置set字句
+					}) // 添加子句
+				db.Statement.AddClauseIfNotExists(clause.Update{})
+				db.Statement.Build("UPDATE", "SET", "WHERE") // 构建sql语句
+			}
+		} else {
+			if db.Statement.SQL.String() == "" {
+				db.Statement.AddClauseIfNotExists(clause.Delete{})
+				db.Statement.AddClauseIfNotExists(clause.From{})
+				db.Statement.Build("DELETE", "FROM", "WHERE")
+			}
+		}
+		// 检测有没有where子句
+		if _, ok := db.Statement.Clauses["WHERE"]; !db.AllowGlobalUpdate && !ok {
+			err := db.AddError(gorm.ErrMissingWhereClause)
+			if err != nil {
+				return
+			}
+			return
+		}
+
+		// 执行sql
+		if !db.DryRun && db.Error == nil {
+			result, err := db.Statement.ConnPool.ExecContext(db.Statement.Context,
+				db.Statement.SQL.String(), db.Statement.Vars...)
+			if err != nil {
+
+				err1 := db.AddError(err)
+				if err1 != nil {
+					return
+				}
+			}
+			db.RowsAffected, _ = result.RowsAffected()
+
+		}
+	}
 }
 
 func CloseDB() {

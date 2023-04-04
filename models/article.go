@@ -1,10 +1,5 @@
 package models
 
-import (
-	"gorm.io/gorm"
-	"time"
-)
-
 type Article struct {
 	Model
 	TagID int `json:"tag_id" gorm:"index"` // grom:index用于声明索引
@@ -21,7 +16,7 @@ type Article struct {
 // 检测文章是否存在
 func ExistArticleByID(id int) bool {
 	var article Article
-	db.Select("id").Where("id = ?", id).First(&article)
+	db.Select("id").Where("id = ? and deleted_on = ?", id, 0).First(&article)
 
 	if article.ID > 0 {
 		return true
@@ -45,7 +40,7 @@ func GetArticles(pageNum int, pageSize int, maps interface{}) (articles []Articl
 // 获取单个文章
 func GetArticle(id int) (article Article) {
 	// 根据id查询文章
-	db.Where("id = ?", id).First(&article)
+	db.Where("id = ? and deleted_on", id, 0).First(&article)
 	// Preload预加载Tag模型，这样可以在查询Article模型时同时查询关联的Tag模型
 	db.Preload("Tag").Find(&article.Tag, article.TagID)
 	return
@@ -53,7 +48,7 @@ func GetArticle(id int) (article Article) {
 
 // 编辑文章
 func EditArticle(id int, data interface{}) bool {
-	db.Model(&Article{}).Where("id = ?", id).Updates(data)
+	db.Model(&Article{}).Where("id = ? and deleted_on", id, 0).Updates(data)
 	return true
 }
 
@@ -74,15 +69,4 @@ func AddArticle(data map[string]interface{}) bool {
 func DeleteArticle(id int) bool {
 	db.Where("id = ?", id).Delete(Article{})
 	return true
-}
-
-func (article *Article) BeforeCreate(tx *gorm.DB) error {
-	tx.Statement.SetColumn("CreatedOn", time.Now().Unix())
-
-	return nil
-}
-
-func (article *Article) BeforeUpdate(tx *gorm.DB) error {
-	tx.Statement.SetColumn("ModifiedOn", time.Now().Unix())
-	return nil
 }

@@ -12,12 +12,12 @@ import (
 	"net/http"
 )
 
-// @Summary Get a single article
+// @Summary 获取单个文章
 // @Produce  json
 // @Param id path int true "ID"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/v1/articles/{id} [get]
-func GetArticle(c *gin.Context) { // 获取单个文章
+func GetArticle(c *gin.Context) {
 	id := com.StrTo(c.Param("id")).MustInt()
 
 	valid := validation.Validation{}
@@ -47,14 +47,14 @@ func GetArticle(c *gin.Context) { // 获取单个文章
 	})
 }
 
-// @Summary Get multiple articles
+// @Summary 获取多个文章
 // @Produce  json
 // @Param tag_id body int false "TagID"
 // @Param state body int false "State"
 // @Param created_by body int false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/v1/articles [get]
-func GetArticles(c *gin.Context) { // 获取多个文章
+func GetArticles(c *gin.Context) {
 	data := make(map[string]interface{})
 	maps := make(map[string]interface{})
 
@@ -96,7 +96,7 @@ func GetArticles(c *gin.Context) { // 获取多个文章
 	})
 }
 
-// @Summary Add article
+// @Summary 新增文章
 // @Produce  json
 // @Param tag_id body int true "TagID"
 // @Param title body string true "Title"
@@ -106,7 +106,7 @@ func GetArticles(c *gin.Context) { // 获取多个文章
 // @Param state body int true "State"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/v1/articles [post]
-func AddArticle(c *gin.Context) { // 新增文章
+func AddArticle(c *gin.Context) {
 	tagId := com.StrTo(c.Query("tag_id")).MustInt()
 	title := c.Query("title")
 	desc := c.Query("desc")

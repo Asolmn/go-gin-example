@@ -21,7 +21,7 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get multiple articles",
+                "summary": "获取多个文章",
                 "parameters": [
                     {
                         "description": "TagID",
@@ -61,7 +61,7 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Add article",
+                "summary": "新增文章",
                 "parameters": [
                     {
                         "description": "TagID",
@@ -133,7 +133,7 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get a single article",
+                "summary": "获取单个文章",
                 "parameters": [
                     {
                         "type": "integer",
@@ -158,7 +158,7 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get multiple article tags",
+                "summary": "获取多个文章标签",
                 "parameters": [
                     {
                         "type": "string",
@@ -186,7 +186,7 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Add article tag",
+                "summary": "新增文章标签",
                 "parameters": [
                     {
                         "description": "Name",
@@ -229,7 +229,7 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Update article tag",
+                "summary": "修改文章标签",
                 "parameters": [
                     {
                         "type": "integer",
@@ -278,7 +278,7 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Delete article tag",
+                "summary": "删除文章标签",
                 "parameters": [
                     {
                         "type": "integer",
@@ -303,7 +303,7 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get Auth",
+                "summary": "获取验证",
                 "parameters": [
                     {
                         "type": "string",

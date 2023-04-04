@@ -1,9 +1,7 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"log"
-	"time"
 )
 
 // 用于Gorm的使用 给予附属属性json，方便c.JSON的时候自动转换格式
@@ -38,7 +36,7 @@ func GetTagTotal(maps interface{}) (count int64) {
 func ExistTagByName(name string) bool {
 	var tag Tag
 	// select id from tag where name = name order by blog_tags.id limit 1
-	db.Select("id").Where("name = ?", name).First(&tag)
+	db.Select("id").Where("name = ? and deleted_on", name, 0).First(&tag)
 	if tag.ID > 0 {
 		return true
 	}
@@ -68,8 +66,11 @@ func ExistTagByID(id int) bool {
 	var tag Tag
 	// 查询id
 	// select id from blog_tag where blog_tag.id = id order by id limit 1
-	db.Select("id").Where("id = ?", id).First(&tag)
+	db.Select("id").Where("id = ? and deleted_on = ?", id, 0).First(&tag)
 	if tag.ID > 0 {
+		//if tag.DeletedAt.Time.IsZero() {
+		//	return true
+		//}
 		return true
 	}
 	return false
@@ -86,15 +87,4 @@ func DeleteTag(id int) bool {
 func EditTag(id int, data interface{}) bool {
 	db.Model(&Tag{}).Where("id = ?", id).Updates(data)
 	return true
-}
-
-func (tag *Tag) BeforeCreate(tx *gorm.DB) (err error) {
-
-	tx.Statement.SetColumn("CreatedOn", time.Now().Unix())
-	return
-}
-
-func (tag *Tag) BeforeUpdate(tx *gorm.DB) (err error) {
-	tx.Statement.SetColumn("ModifiedOn", time.Now().Unix())
-	return
 }
