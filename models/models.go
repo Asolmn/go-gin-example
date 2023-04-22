@@ -23,30 +23,21 @@ type Model struct {
 	DeletedOn  int `json:"deleted_on"`
 }
 
-func init() {
+func Setup() {
 
 	// 数据库连接信息
-	var (
-		err                                       error
-		dbName, user, password, host, tablePrefix string
-	)
+	var err error
 
-	// 读取数据
-	sec, err := setting.Cfg.GetSection("database")
-	if err != nil {
-		log.Fatal(2, "Fail to get section 'database': %v", err)
-	}
-
-	//dbType = sec.Key("TYPE").String()
-	dbName = sec.Key("NAME").String()
-	user = sec.Key("USER").String()
-	password = sec.Key("PASSWORD").String()
-	host = sec.Key("HOST").String()
-	tablePrefix = sec.Key("TABLE_PREFIX").String()
+	user := setting.DatabaseSetting.User
+	password := setting.DatabaseSetting.Password
+	host := setting.DatabaseSetting.Host
+	dbName := setting.DatabaseSetting.Name
+	tablePrefix := setting.DatabaseSetting.TablePrefix
 
 	dsn := fmt.Sprintf("%v:%v@tcp(%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
 		user, password, host, dbName)
 
+	// 创建日志记录器
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
 		logger.Config{
@@ -93,14 +84,28 @@ func init() {
 
 }
 
+// 关闭连接
+func CloseDB() {
+	sqlDB, _ := db.DB()
+	defer func(sqlDB *sql.DB) {
+		err := sqlDB.Close()
+		if err != nil {
+
+		}
+	}(sqlDB)
+}
+
+// 更新创建时间
 func updateTimeStampForBeforeCreateCallback(db *gorm.DB) {
 	db.Statement.SetColumn("CreatedOn", time.Now().Unix())
 }
 
+// 更新修改时间
 func updateTimeStampForBeforeUpdateCallback(db *gorm.DB) {
 	db.Statement.SetColumn("ModifiedOn", time.Now().Unix())
 }
 
+// 软删除
 func deleteCallback(db *gorm.DB) {
 	if db.Error != nil {
 		return
@@ -154,14 +159,4 @@ func deleteCallback(db *gorm.DB) {
 
 		}
 	}
-}
-
-func CloseDB() {
-	sqlDB, _ := db.DB()
-	defer func(sqlDB *sql.DB) {
-		err := sqlDB.Close()
-		if err != nil {
-
-		}
-	}(sqlDB)
 }

@@ -5,12 +5,13 @@ type Article struct {
 	TagID int `json:"tag_id" gorm:"index"` // grom:index用于声明索引
 	Tag   Tag `json:"tag"`                 // 嵌套Tag struct，利用TagID与Tag模型相互关联，执行查询的时候，能达到Article和Tag关联查询
 
-	Title      string `json:"title"`
-	Desc       string `json:"desc"`
-	Content    string `json:"content"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
+	Title         string `json:"title"`
+	Desc          string `json:"desc"`
+	Content       string `json:"content"`
+	CoverImageUrl string `json:"cover_image_url"`
+	CreatedBy     string `json:"created_by"`
+	ModifiedBy    string `json:"modified_by"`
+	State         int    `json:"state"`
 }
 
 // 检测文章是否存在
@@ -53,20 +54,31 @@ func EditArticle(id int, data interface{}) bool {
 }
 
 // 添加文章
-func AddArticle(data map[string]interface{}) bool {
-	db.Create(&Article{
-		TagID:     data["tag_id"].(int),
-		Title:     data["title"].(string),
-		Desc:      data["desc"].(string),
-		Content:   data["content"].(string),
-		CreatedBy: data["created_by"].(string),
-		State:     data["state"].(int),
-	})
-	return true
+func AddArticle(data map[string]interface{}) error {
+	article := Article{
+		TagID:         data["tag_id"].(int),
+		Title:         data["title"].(string),
+		Desc:          data["desc"].(string),
+		Content:       data["content"].(string),
+		CreatedBy:     data["created_by"].(string),
+		State:         data["state"].(int),
+		CoverImageUrl: data["cover_image_url"].(string),
+	}
+	if err := db.Create(&article).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 // 删除文章
 func DeleteArticle(id int) bool {
 	db.Where("id = ?", id).Delete(Article{})
+	return true
+}
+
+// 硬删除
+func CleanAllArticle() bool {
+	db.Unscoped().Where("deleted_on != ?", 0).Delete(&Article{})
+
 	return true
 }

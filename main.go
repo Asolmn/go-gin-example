@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/Asolmn/go-gin-example/models"
+	"github.com/Asolmn/go-gin-example/pkg/logging"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"github.com/Asolmn/go-gin-example/routers"
 	"github.com/fvbock/endless"
@@ -10,11 +12,17 @@ import (
 )
 
 func main() {
+
+	setting.Setup()
+	fmt.Println(setting.AppSetting.LogSaveName)
+	models.Setup()
+	logging.Setup()
+
 	// 通过endless实现服务重启的零停机
-	endless.DefaultReadTimeOut = setting.ReadTimeout
-	endless.DefaultWriteTimeOut = setting.WriteTimeout
+	endless.DefaultReadTimeOut = setting.ServerSetting.ReadTimeout
+	endless.DefaultWriteTimeOut = setting.ServerSetting.WriteTimeout
 	endless.DefaultMaxHeaderBytes = 1 << 20
-	endPoint := fmt.Sprintf(":%d", setting.HTTPPort)
+	endPoint := fmt.Sprintf(":%d", setting.ServerSetting.HttpPort)
 
 	// 返回type Engine struct类型，包含RouterGroup
 	// 相当于创建一个路由Handlers，后期可以绑定各类的路由规则和函数、中间件

@@ -28,11 +28,15 @@ const (
 	FATAL
 )
 
-func init() {
-	filePath := getLogFileFullPath() // 获取日志文件存放路径
-	fmt.Println(filePath)
-	F = openLogFile(filePath) // 打开目标目录
-	// 创建一个logger实例，输出目录为F，暂无输出前缀，输出格式为log.LstdFlags
+func Setup() {
+	var err error
+	filePath := getLogFilePath()
+	fileName := getLogFileName()
+
+	F, err = openLogFile(fileName, filePath)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	logger = log.New(F, DefaultPrefix, log.LstdFlags)
 }
 

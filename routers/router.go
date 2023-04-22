@@ -4,15 +4,17 @@ import (
 	_ "github.com/Asolmn/go-gin-example/docs"
 	"github.com/Asolmn/go-gin-example/middleware/jwt"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
+	"github.com/Asolmn/go-gin-example/pkg/upload"
 	"github.com/Asolmn/go-gin-example/routers/api"
 	v1 "github.com/Asolmn/go-gin-example/routers/api/v1"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
 )
 
 func InitRouter() *gin.Engine {
-	gin.SetMode(setting.RunMode)
+	gin.SetMode(setting.ServerSetting.RunMode)
 	r := gin.New()
 
 	r.Use(gin.Logger())
@@ -27,8 +29,12 @@ func InitRouter() *gin.Engine {
 	//		"message": "test",
 	//	})
 	//})
+
+	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
+
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/auth", api.GetAuth)
+	r.POST("/upload", api.UploadImage)
 
 	apiv1 := r.Group("/api/v1")
 	apiv1.Use(jwt.JWT()) // 将中间件接入Gin
