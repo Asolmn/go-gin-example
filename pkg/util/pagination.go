@@ -3,6 +3,7 @@
 package util
 
 import (
+	"fmt"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
@@ -14,5 +15,6 @@ func GetPage(c *gin.Context) int {
 	if page > 0 {
 		result = (page - 1) * setting.AppSetting.PageSize
 	}
+	fmt.Println(result)
 	return result
 }
