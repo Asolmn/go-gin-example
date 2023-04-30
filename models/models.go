@@ -57,7 +57,7 @@ func Setup() {
 	}) // 连接数据库
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 	// 直接使用db.DB()方法获取*sql.DB对象
 	sqlDB, err1 := db.DB()

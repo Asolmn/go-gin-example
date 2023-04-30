@@ -21,6 +21,7 @@ func UploadImage(c *gin.Context) {
 			"msg":  e.GetMsg(code),
 			"data": data,
 		})
+		return
 	}
 
 	if image == nil {

@@ -4,9 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Asolmn/go-gin-example/models"
+	"github.com/Asolmn/go-gin-example/pkg/export"
 	"github.com/Asolmn/go-gin-example/pkg/gredis"
 	"github.com/Asolmn/go-gin-example/pkg/logging"
 	"github.com/Asolmn/go-gin-example/service/cache_service"
+	"github.com/tealeg/xlsx"
+	"github.com/xuri/excelize/v2"
+	"io"
+	"strconv"
+	"time"
 )
 
 type Tag struct {
@@ -97,6 +103,85 @@ func (t *Tag) Edit() error {
 // 删除标签
 func (t *Tag) Delete() error {
 	return models.DeleteTag(t.ID)
+}
+
+// 导出标签
+func (t *Tag) Export() (string, error) {
+
+	tags, err := t.GetAll() // 获取标签信息
+	if err != nil {
+		return "", err
+	}
+	file := xlsx.NewFile() // 创建excel文件
+	sheet, err := file.AddSheet("标签信息")
+	if err != nil {
+		return "", err
+	}
+
+	titles := []string{"ID", "名称", "创建人", "创建时间", "修改人", "修改时间"}
+	row := sheet.AddRow() // 添加行
+
+	var cell *xlsx.Cell // 单元格
+	for _, title := range titles {
+		cell = row.AddCell() // 当前行添加一个单元格，并赋值给cell
+		cell.Value = title   // 设置当前单元格的值
+	}
+
+	// 将tag信息添加到excel中
+	for _, v := range tags {
+		values := []string{
+			strconv.Itoa(v.ID),
+			v.Name,
+			v.CreatedBy,
+			strconv.Itoa(v.CreatedOn),
+			v.ModifiedBy,
+			strconv.Itoa(v.ModifiedOn),
+		}
+		row = sheet.AddRow() // 创建新一行
+		// 将values的值逐一添加到新一行中的单元格中
+		for _, value := range values {
+			cell = row.AddCell()
+			cell.Value = value
+		}
+	}
+
+	times := strconv.Itoa(int(time.Now().Unix()))
+	filename := "tags-" + times + ".xlsx" // 生成excel文件名
+
+	fullPath := export.GetExcelFullPath() + filename // 设置完成路径
+	err = file.Save(fullPath)                        // 保存
+	if err != nil {
+		return "", err
+	}
+	return filename, nil
+}
+
+// 导入标签
+func (t *Tag) Import(r io.Reader) error {
+	xlsxfile, err := excelize.OpenReader(r)
+	if err != nil {
+		return err
+	}
+
+	rows, err := xlsxfile.GetRows("标签信息") // rows为sheet中的全部行
+	if err != nil {
+		return err
+	}
+
+	for irow, row := range rows {
+		if irow > 0 { // 如果行数大于0
+			var data []string
+			for _, cell := range row { // 获取每一行的单元格值
+				data = append(data, cell) // 将单元格的值循环加入到data中
+			}
+			// AddTag(名称,状态,创建人)
+			err := models.AddTag(data[1], 1, data[2])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 // 结构体序列化为map

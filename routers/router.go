@@ -3,6 +3,7 @@ package routers
 import (
 	_ "github.com/Asolmn/go-gin-example/docs"
 	"github.com/Asolmn/go-gin-example/middleware/jwt"
+	"github.com/Asolmn/go-gin-example/pkg/export"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"github.com/Asolmn/go-gin-example/pkg/upload"
 	"github.com/Asolmn/go-gin-example/routers/api"
@@ -18,7 +19,6 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 
 	r.Use(gin.Logger())
-
 	r.Use(gin.Recovery())
 
 	// 创建不同的HTTP方法绑定到Handlers中
@@ -31,6 +31,7 @@ func InitRouter() *gin.Engine {
 	//})
 
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
+	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/auth", api.GetAuth)
@@ -48,6 +49,10 @@ func InitRouter() *gin.Engine {
 		apiv1.PUT("/tags/:id", v1.EditTag)
 		// 删除指定标签
 		apiv1.DELETE("/tags/:id", v1.DeleteTag)
+		// 导出标签
+		apiv1.POST("/tags/export", v1.ExportTag)
+		// 导入标签
+		apiv1.POST("/tags/import", v1.ImporTag)
 	}
 
 	{

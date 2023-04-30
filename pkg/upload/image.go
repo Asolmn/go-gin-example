@@ -16,7 +16,7 @@ import (
 // 获取图片完整访问URL
 func GetImageFullUrl(name string) string {
 	// http://127.0.0.1:8000/upload/images/name
-	return setting.AppSetting.ImagePrefixUrl + "/" + GetImagePath() + name
+	return setting.AppSetting.PrefixUrl + "/" + GetImagePath() + name
 }
 
 // 获取图片名称

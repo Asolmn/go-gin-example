@@ -14,6 +14,8 @@ var MsgFlags = map[int]string{
 	ERROR_ADD_TAG_FAIL:    "添加标签失败",
 	ERROR_EDIT_TAG_FAIL:   "更新标签失败",
 	ERROR_DELETE_TAG_FAIL: "删除标签失败",
+	ERROR_EXPORT_TAG_FAIL: "导出标签失败",
+	ERROR_IMPORT_TAG_FAIL: "导入标签失败",
 
 	ERROR_NOT_EXIST_ARTICLE:        "该文章不存在",
 	ERROR_GET_ARTICLE_FAIL:         "请求文章失败",

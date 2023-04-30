@@ -15,11 +15,12 @@ type auth struct {
 	Password string `valid:"Required; MaxSize(50)"`
 }
 
-// @Summary 获取验证
+// @Summary Get Auth
 // @Produce  json
 // @Param username query string true "userName"
 // @Param password query string true "password"
-// @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
 // @Router /auth [get]
 func GetAuth(c *gin.Context) {
 	appG := app.Gin{C: c}
@@ -44,7 +45,6 @@ func GetAuth(c *gin.Context) {
 		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
 		return
 	}
-
 	if !isExist {
 		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH, nil)
 		return
@@ -55,8 +55,8 @@ func GetAuth(c *gin.Context) {
 		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_TOKEN, nil)
 		return
 	}
-
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+	data := map[string]string{
 		"token": token,
-	})
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, data)
 }

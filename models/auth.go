@@ -1,6 +1,8 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Auth struct {
 	ID       int    `gorm:"primary_key" json:"id"`
