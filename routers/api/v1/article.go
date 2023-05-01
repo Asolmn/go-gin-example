@@ -3,11 +3,14 @@ package v1
 import (
 	"github.com/Asolmn/go-gin-example/pkg/app"
 	"github.com/Asolmn/go-gin-example/pkg/e"
+	"github.com/Asolmn/go-gin-example/pkg/logging"
+	"github.com/Asolmn/go-gin-example/pkg/qrcode"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"github.com/Asolmn/go-gin-example/pkg/util"
 	"github.com/Asolmn/go-gin-example/service/article_service"
 	"github.com/Asolmn/go-gin-example/service/tag_service"
 	"github.com/astaxie/beego/validation"
+	"github.com/boombuler/barcode/qr"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
 	"net/http"
@@ -281,4 +284,77 @@ func DeleteArticle(c *gin.Context) {
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 
+}
+
+type qrcodeUrl struct {
+	QRCODE_URl string
+}
+
+func GenerateArticlePoster(c *gin.Context) {
+	var QRCODE_URL string = "http://github.com/Asolmn/go-gin-example"
+
+	appG := app.Gin{C: c}
+
+	article := &article_service.Article{}
+	qrC := qrcode.NewQrCode(QRCODE_URL, 300, 300, qr.M, qr.Auto) // 创建二维码信息
+
+	// posterName = poster-MD5(QRCODE_URL).jpg
+	posterName := article_service.GetPosterFlag() + "-" + qrcode.GetQrCodeFileName(qrC.URL) + qrC.GetQrCodeExt()
+
+	/*
+		articlePoster = {
+			PosterName string = poster-utile.EncodeMD5(QRCODE_URL).jpg
+			Article *Atricle = Article{}
+			qr *qrcode.QrCode = qrC {
+					URL    string = QRCODE_URL
+					Width  int = 300
+					Height int = 300
+					Ext    string = .jpg
+					Level  qr.ErrorCorrectionLevel = qr.M
+					Mode   qr.Encoding = qr.Auto
+			}
+		}
+	*/
+	articlePoster := article_service.NewArticlePoster(posterName, article, qrC)
+	/*
+		articlePosterBgService = {
+			Name string =  bg.jpg
+			*ArticlePoster = articlePoster
+			Rect: Rect{
+				X0: 0,
+				Y0: 0,
+				X1: 550,
+				Y1: 700,
+			}
+			Pt: Pt{
+				X: 125,
+				Y: 298,
+			}
+		}
+	*/
+	articlePosterBgService := article_service.NewArticlePosterBg( // 合并图像结构体
+		"bg.jpg",
+		articlePoster,
+		&article_service.Rect{
+			X0: 0,
+			Y0: 0,
+			X1: 550,
+			Y1: 700,
+		},
+		&article_service.Pt{
+			X: 125,
+			Y: 298,
+		},
+	)
+
+	_, filePath, err := articlePosterBgService.Generate() // 生成背景与二维码的合并图像
+	if err != nil {                                       // 返回报错
+		logging.Info(err)
+		appG.Response(http.StatusOK, e.ERROR_GEN_ARTICLE_POST_FAIL, nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{ // 返回成功响应
+		"poster_url":      qrcode.GetQrCodeFullUrl(posterName),
+		"poster_save_url": filePath + posterName,
+	})
 }

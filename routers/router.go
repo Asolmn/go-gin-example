@@ -4,6 +4,7 @@ import (
 	_ "github.com/Asolmn/go-gin-example/docs"
 	"github.com/Asolmn/go-gin-example/middleware/jwt"
 	"github.com/Asolmn/go-gin-example/pkg/export"
+	"github.com/Asolmn/go-gin-example/pkg/qrcode"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"github.com/Asolmn/go-gin-example/pkg/upload"
 	"github.com/Asolmn/go-gin-example/routers/api"
@@ -30,8 +31,10 @@ func InitRouter() *gin.Engine {
 	//	})
 	//})
 
+	// 创建静态文件服务器
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
+	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/auth", api.GetAuth)
@@ -66,6 +69,8 @@ func InitRouter() *gin.Engine {
 		apiv1.PUT("/articles/:id", v1.EditArticle)
 		// 删除指定文章
 		apiv1.DELETE("/articles/:id", v1.DeleteArticle)
+		// 生成二维码
+		apiv1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 	}
 
 	return r

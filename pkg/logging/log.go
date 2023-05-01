@@ -30,8 +30,8 @@ const (
 
 func Setup() {
 	var err error
-	filePath := getLogFilePath()
-	fileName := getLogFileName()
+	filePath := getLogFilePath() // runtime/logs/
+	fileName := getLogFileName() // log2023430.log
 
 	F, err = openLogFile(fileName, filePath)
 	if err != nil {

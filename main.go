@@ -17,8 +17,8 @@ func main() {
 	gin.SetMode(setting.ServerSetting.RunMode)
 
 	setting.Setup()
-	models.Setup()
 	logging.Setup()
+	models.Setup()
 	err := gredis.Setup()
 	if err != nil {
 		return

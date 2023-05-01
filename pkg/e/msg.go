@@ -25,6 +25,7 @@ var MsgFlags = map[int]string{
 	ERROR_ADD_ARTICLE_FAIL:         "添加文章失败",
 	ERROR_DELETE_ARTICLE_FAIL:      "删除文章失败",
 	ERROR_EDIT_ARTICLE_FAIL:        "更新文章失败",
+	ERROR_GEN_ARTICLE_POST_FAIL:    "文章二维码生成失败",
 
 	ERROR_AUTH_CHECK_TOKEN_FAIL:    "Token鉴权失败",
 	ERROR_AUTH_CHECK_TOKEN_TIMEOUT: "Token已超时",

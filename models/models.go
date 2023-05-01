@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"github.com/Asolmn/go-gin-example/pkg/logging"
 	"github.com/Asolmn/go-gin-example/pkg/setting"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -57,13 +58,13 @@ func Setup() {
 	}) // 连接数据库
 
 	if err != nil {
-		panic(err)
+		logging.Warn(err)
 	}
 	// 直接使用db.DB()方法获取*sql.DB对象
 	sqlDB, err1 := db.DB()
 
 	if err1 != nil {
-		log.Println(err1)
+		logging.Warn(err1)
 	}
 	sqlDB.SetMaxIdleConns(10)  // 用于设置连接池中空闲连接的最大数量
 	sqlDB.SetMaxOpenConns(100) // 设置打开数据库连接的最大数量
@@ -71,14 +72,17 @@ func Setup() {
 	// 执行回调函数
 	err2 := db.Callback().Create().Replace("gorm:before_create", updateTimeStampForBeforeCreateCallback)
 	if err2 != nil {
+		logging.Warn(err2)
 		return
 	}
 	err3 := db.Callback().Update().Replace("gorm:before_update", updateTimeStampForBeforeUpdateCallback)
 	if err3 != nil {
+		logging.Warn(err3)
 		return
 	}
 	err4 := db.Callback().Delete().Replace("gorm:delete", deleteCallback)
 	if err4 != nil {
+		logging.Warn(err4)
 		return
 	}
 
